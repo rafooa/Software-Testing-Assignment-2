@@ -10,9 +10,9 @@ import java.sql.ResultSet;
 public class LoginApp extends JFrame {
     private JTextField emailField;
     private JPasswordField passwordField;
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/assignment2";
+    private static final String DB_URL = "jdbc:mysql://localhost:3306/softwaretesting";
     private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "Rafay@1234";
+    private static final String DB_PASSWORD = "12345678";
 
     public LoginApp() {
         setTitle("Login Screen");
@@ -47,7 +47,7 @@ public class LoginApp extends JFrame {
             String email = emailField.getText();
             String password = new String(passwordField.getPassword()); // Password is ignored for validation
 
-            String userName = authenticateUser(email, password);
+            String userName = authenticateUser(email);
             if (userName != null) {
                 JOptionPane.showMessageDialog(null, "Welcome, " + userName + "!", "Login Successful", JOptionPane.INFORMATION_MESSAGE);
             } else {
@@ -56,13 +56,12 @@ public class LoginApp extends JFrame {
         }
     }
 
-    String authenticateUser(String email, String password) {
+    private String authenticateUser(String email) {
         String userName = null;
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USER, DB_PASSWORD)) {
-            String query = "SELECT name FROM User WHERE Email = ? AND Password = ?";
+            String query = "SELECT name FROM User WHERE Email = ?";
             PreparedStatement stmt = conn.prepareStatement(query);
             stmt.setString(1, email);
-            stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
