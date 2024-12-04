@@ -1,36 +1,44 @@
-name: Java CI
+name: Java CI with Maven
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
-      - master
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-    # Step 1: Check out the repository code
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    # Step 2: Set up JDK (use Java 17 or 21, as 23 is not supported yet)
-    - name: Set up JDK
-      uses: actions/setup-java@v3
-      with:
-        java-version: '17' # Use 17 (or 21) to match the updated pom.xml
-        distribution: 'temurin'
+      - name: Set up JDK
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
 
-    # Step 3: Cache Maven dependencies
-    - name: Cache Maven dependencies
-      uses: actions/cache@v3
-      with:
-        path: ~/.m2/repository
-        key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-        restore-keys: |
-          ${{ runner.os }}-maven
+      - name: Cache Maven dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-m2
 
-    # Step 4: Build and test
-    - name: Build and test
-      run: mvn clean test
+      - name: Build with Maven
+        run: mvn clean install
+
+      - name: Run tests
+        run: mvn test
+
+      # Upload test results as an artifact
+      - name: Upload test results
+        if: failure() # Only upload if tests fail
+        uses: actions/upload-artifact@v3
+        with:
+          name: surefire-reports
+          path: target/surefire-reports
