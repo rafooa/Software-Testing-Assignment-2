@@ -17,7 +17,7 @@ jobs:
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
-        java-version: '17' # Adjust based on your JDK version
+        java-version: '23'  # Matches the maven.compiler.source and target in the pom.xml
         distribution: 'temurin'
 
     - name: Cache Maven dependencies
