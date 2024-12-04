@@ -11,15 +11,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    # Step 1: Check out the repository code
     - name: Checkout code
       uses: actions/checkout@v3
 
+    # Step 2: Set up JDK (use Java 17 or 21, as 23 is not supported yet)
     - name: Set up JDK
       uses: actions/setup-java@v3
       with:
-        java-version: '23'  # Matches the maven.compiler.source and target in the pom.xml
+        java-version: '17' # Use 17 (or 21) to match the updated pom.xml
         distribution: 'temurin'
 
+    # Step 3: Cache Maven dependencies
     - name: Cache Maven dependencies
       uses: actions/cache@v3
       with:
@@ -28,5 +31,6 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven
 
+    # Step 4: Build and test
     - name: Build and test
       run: mvn clean test
